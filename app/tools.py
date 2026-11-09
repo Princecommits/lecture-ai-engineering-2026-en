@@ -77,3 +77,31 @@ def get_lecture_summary(lecture: int) -> str:
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
         return f"Key points for Lecture {lecture:02d} are not available yet. Available sessions: {', '.join(available)}"
     return path.read_text(encoding="utf-8")
+
+
+def make_quiz(lecture: int) -> str:
+    """Create a one-question review prompt for a term covered in a specific AIE2026 lecture.
+
+    Use when a learner asks for a quick comprehension check, a review question, or a self-test from a
+    lecture such as "Give me one review question from Lecture 02". This helps learners recall a term and
+    confirm the meaning without exposing the full answer until they try to respond.
+    """
+    glossary = load_glossary()
+    lecture_terms = [entry for entry in glossary if entry.get("lecture") == lecture]
+    if not lecture_terms:
+        available = sorted({entry["lecture"] for entry in glossary})
+        return (
+            f"Lecture {lecture} is not available in the glossary. "
+            f"Available lectures: {', '.join(str(v) for v in available)}."
+        )
+
+    term = lecture_terms[0]
+    question = f"What does '{term['term']}' mean in the AIE2026 course?"
+    return json.dumps(
+        {
+            "lecture": lecture,
+            "question": question,
+            "answer": term["definition"],
+        },
+        ensure_ascii=False,
+    )
