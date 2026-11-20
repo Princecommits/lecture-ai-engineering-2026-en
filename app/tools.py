@@ -68,9 +68,10 @@ def search_glossary(query: str) -> str:
 
 
 def get_lecture_summary(lecture: int) -> str:
-    """Return key points from the specified session (an integer starting at 1).
+    """Retrieve the complete key-point summary for one numbered AIE2026 lecture.
 
-    Use when asked about session content or relationships, such as "What will we learn in Lecture 03?".
+    Supply lecture as an integer starting at 1. Use this for questions about a lecture's
+    syllabus, main topics, or how its topics relate to the course.
     """
     path = DATA_DIR / "lectures" / f"{lecture:02d}.md"
     if not path.exists():
